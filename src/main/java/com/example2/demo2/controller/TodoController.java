@@ -2,9 +2,11 @@ package com.example2.demo2.controller;
 
 
 
+import com.example2.demo2.dto.TodoDTO;
 import com.example2.demo2.model.TodoItem;
 import com.example2.demo2.queue.QueueConfig;
 import com.example2.demo2.repo.TodoRepo;
+import com.example2.demo2.service.TodoService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -16,61 +18,41 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping(value="/todo")
+public class TodoController  {
 
+    private final TodoService todoService;
 
-public class TodoController implements CommandLineRunner {
-    @Autowired
-    private TodoRepo todorepo;
-
-
-    private final RabbitTemplate rabbitTemplate;
-    private final Reciever receiver;
-
-    public TodoController(Reciever receiver, RabbitTemplate rabbitTemplate) {
-        this.receiver = receiver;
-        this.rabbitTemplate = rabbitTemplate;
+    public TodoController(TodoService todoService) {
+        this.todoService = todoService;
     }
+
     @GetMapping
-    public List<TodoItem> findAll()
-    {
-        return todorepo.findAll();
-
+    public List<TodoDTO> findAll() {
+        return todoService.findAll();
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        System.out.println("Sending message...");
-        rabbitTemplate.convertAndSend(QueueConfig.topicExchangeName, "foo.bar.baz", "Hello from RabbitMQ!");
-        receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
-    }
     @PostMapping
-    public TodoItem save(@RequestBody TodoItem todoItem) throws Exception {
-        run();
-        return todorepo.save(todoItem);
-
+    public TodoDTO save(@RequestBody TodoDTO todoDto) throws Exception {
+        return todoService.save(todoDto);
     }
 
     @PutMapping
-    public TodoItem update(@RequestBody TodoItem todoItem)
-    {
-        return todorepo.save(todoItem);
+    public TodoDTO update(@RequestBody TodoDTO todoDto) {
+        return todoService.update(todoDto);
     }
 
     @DeleteMapping(value="/{id}")
-    public void delete(@PathVariable Long id)
-    {
-        todorepo.deleteById(id);
+    public void delete(@PathVariable Long id) {
+        todoService.deleteById(id);
     }
 
     @PutMapping(value = "/{id}/{userid}")
-    public TodoItem addTodoToUser(@PathVariable Long id, @PathVariable Integer userid, @RequestBody TodoItem todoItem){
-        todoItem.setUserid(userid);
-        return todorepo.save(todoItem);
+    public TodoDTO addTodoToUser(@PathVariable Long id, @PathVariable Integer userid, @RequestBody TodoDTO todoDto) {
+        return todoService.addTodoUser(id, userid, todoDto);
     }
 
     @GetMapping(value = "/{userid}")
-    public List<TodoItem> findAllForUser(@PathVariable Integer userid){
-        return todorepo.findByuserid(userid);
+    public List<TodoDTO> findAllForUser(@PathVariable Integer userid) {
+        return todoService.findByuserid(userid);
     }
-
 }

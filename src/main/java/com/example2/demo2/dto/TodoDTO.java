@@ -1,15 +1,9 @@
-package com.example2.demo2.model;
+package com.example2.demo2.dto;
 
+import com.example2.demo2.model.TodoItem;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+public class TodoDTO {
 
-@Entity
-public class TodoItem {
-
-    @Id
-    @GeneratedValue
     private long id;
 
     private String title;
@@ -18,18 +12,15 @@ public class TodoItem {
 
     private Integer userid;
 
-    public TodoItem() {
+    public TodoDTO() {
     }
 
-    public TodoItem(long id, String title, boolean done,Integer userid) {
-        this.id = id;
-        this.title = title;
-        this.done = done;
-        this.userid=userid;
+    public TodoDTO(TodoItem item) {
+        this.id = item.getId();
+        this.title = item.getTitle();
+        this.done = item.isDone();
+        this.userid = item.getUserid();
     }
-
-
-
 
     public long getId() {
         return id;

@@ -9,6 +9,6 @@ import java.util.List;
 public interface TodoRepo extends JpaRepository<TodoItem,Long> , JpaSpecificationExecutor<TodoItem> {
 
 
-    List<TodoItem> findByuserid(int userid);
+    List<TodoItem> findByuserid(Integer userid);
 
 }
