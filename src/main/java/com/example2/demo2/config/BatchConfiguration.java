@@ -1,4 +1,3 @@
-/*
 package com.example2.demo2.config;
 import com.example2.demo2.model.TodoItem;
 import org.springframework.batch.core.Job;
@@ -28,6 +27,12 @@ public class BatchConfiguration {
     @Autowired
     private StepBuilderFactory stepBuilderFactory;
 
+    @Autowired
+    private TodoItemProcessor todoItemProcessor;
+
+    @Autowired
+    private TodoItemWriter todoItemWriter;
+
     @Bean
     public Job readTodoItemsJob() {
         return jobBuilderFactory.get("readTodoItemsJob")
@@ -40,8 +45,8 @@ public class BatchConfiguration {
         return stepBuilderFactory.get("readTodoItemsStep")
                 .<TodoItem, TodoItem> chunk(10)
                 .reader(todoItemReader())
-                .processor(todoItemProcessor())
-                .writer(todoItemWriter())
+                .processor(todoItemProcessor)
+                .writer(todoItemWriter)
                 .build();
     }
 
@@ -49,6 +54,7 @@ public class BatchConfiguration {
     public ItemReader<TodoItem> todoItemReader() {
         FlatFileItemReader<TodoItem> reader = new FlatFileItemReader<>();
         reader.setResource(new FileSystemResource("/Users/slakshmanrao/Downloads/demo2/src/main/resources/todo-items.csv"));
+        reader.setLinesToSkip(1);
         reader.setLineMapper(todoItemLineMapper());
         return reader;
     }
@@ -67,17 +73,17 @@ public class BatchConfiguration {
         return lineMapper;
     }
 
-    @Bean
-    public TodoItemProcessor todoItemProcessor() {
-        return new TodoItemProcessor();
-    }
-
-    @Bean
-    public ItemWriter<TodoItem> todoItemWriter() {
-        return new TodoItemWriter();
-    }
+//    @Bean
+//    public TodoItemProcessor todoItemProcessor() {
+//        return new TodoItemProcessor();
+//    }
+//
+//    @Bean
+//    public ItemWriter<TodoItem> todoItemWriter() {
+//        return new TodoItemWriter();
+//    }
 }
 
 
- */
+
 

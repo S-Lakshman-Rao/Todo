@@ -51,6 +51,10 @@ public class TodoService implements CommandLineRunner {
          */
     }
 
+    public TodoItem saveToDo(TodoItem item){
+        return todoRepo.save(item);
+    }
+
     public TodoDTO save(TodoDTO todoDto) throws Exception {
         run();
 
